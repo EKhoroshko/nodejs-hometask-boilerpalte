@@ -7,4 +7,8 @@ const router = Router();
 
 // TODO: Implement route controllers for user
 
+router.post('/', (req, res, next) => {
+
+})
+
 module.exports = router;
