@@ -11,11 +11,13 @@ router.post('/login', async (req, res, next) => {
     if (!email || !password) {
       throw Error('Incorrect login or password')
     }
-    const user = await AuthService.login(email)
+    const user = await AuthService.login({ email })
     if (user.password !== password) {
       throw Error("Incorrect password")
     }
-    res.data = user;
+    if (user) {
+      res.status(200).json(user);
+    }
   } catch (error) {
     res.err = error;
   } finally {
