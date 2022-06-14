@@ -1,6 +1,9 @@
 const express = require('express')
 const cors = require('cors');
 require('./config/db');
+require('dotenv').config();
+
+const { PORT = 3050 } = process.env;
 
 const app = express()
 
@@ -13,9 +16,8 @@ routes(app);
 
 app.use('/', express.static('./client/build'));
 
-const port = 3050;
-app.listen(port, () => {
-  console.log(`I work in port ${port}`);
+app.listen(PORT, () => {
+  console.log(`I work in port ${PORT}`);
 });
 
 exports.app = app;
