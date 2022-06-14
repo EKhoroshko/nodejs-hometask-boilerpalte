@@ -10,23 +10,19 @@ const router = Router();
 router.get('/', async (req, res, next) => {
   try {
     const fighters = await FighterService.getAll();
-    res.status(200).json(
-      fighters
-    )
+    res.data = fighters;
   } catch (error) {
-    next(error)
+    res.err = error;
+  } finally {
+    next();
   }
-});
+}, responseMiddleware);
 
 router.get('/:id', async (req, res, next) => {
   const { id } = req.params;
   try {
     const fighterById = await FighterService.search({ id })
-    if (fighterById) {
-      res.status(200).json({
-        fighterById
-      })
-    }
+    res.data = fighterById;
   } catch (error) {
     res.err = error;
   } finally {
@@ -34,12 +30,11 @@ router.get('/:id', async (req, res, next) => {
   }
 }, responseMiddleware);
 
-router.post('/', async (req, res, next) => {
+router.post('/', createFighterValid, async (req, res, next) => {
   try {
-    const createNewFighter = await FighterService.createFighter(req.body);
-    res.status(201).json({
-      createNewFighter
-    });
+    const { name, power, defense, health = 100 } = req.body;
+    const createNewFighter = await FighterService.createFighter({ name, power, defense, health });
+    res.data = createNewFighter;
   } catch (error) {
     res.err = error;
   } finally {
@@ -47,14 +42,10 @@ router.post('/', async (req, res, next) => {
   }
 }, responseMiddleware);
 
-router.put('/:id', async (req, res, next) => {
+router.put('/:id', updateFighterValid, async (req, res, next) => {
   try {
     const updateFighter = await FighterService.putFighter(req.params.id, req.body, { new: true })
-    if (updateFighter) {
-      res.status(200).json({
-        updateFighter
-      })
-    }
+    res.data = updateFighter;
   } catch (error) {
     res.err = error;
   } finally {

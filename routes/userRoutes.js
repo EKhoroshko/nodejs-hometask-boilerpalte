@@ -10,23 +10,19 @@ const router = Router();
 router.get('/', async (req, res, next) => {
   try {
     const users = await UserService.getAll();
-    res.status(200).json({
-      users
-    })
+    res.data = users;
   } catch (error) {
-    next(error)
+    res.err = error;
+  } finally {
+    next();
   }
-});
+}, responseMiddleware);
 
 router.get('/:id', async (req, res, next) => {
   const { id } = req.params;
   try {
     const userById = await UserService.search({ id })
-    if (userById) {
-      res.status(200).json({
-        userById
-      })
-    }
+    res.data = userById;
   } catch (error) {
     res.err = error;
   } finally {
@@ -34,12 +30,10 @@ router.get('/:id', async (req, res, next) => {
   }
 }, responseMiddleware);
 
-router.post('/', async (req, res, next) => {
+router.post('/', createUserValid, async (req, res, next) => {
   try {
-    const registrationUser = await UserService.createUser(req.body)
-    res.status(201).json({
-      registrationUser
-    });
+    const registrationUser = await UserService.createUser(req.body);
+    res.data = registrationUser;
   } catch (error) {
     res.err = error;
   } finally {
@@ -47,14 +41,10 @@ router.post('/', async (req, res, next) => {
   }
 }, responseMiddleware);
 
-router.put('/:id', async (req, res, next) => {
+router.put('/:id', updateUserValid, async (req, res, next) => {
   try {
     const updateUser = await UserService.putUser(req.params.id, req.body, { new: true })
-    if (updateUser) {
-      res.status(200).json({
-        updateUser
-      })
-    }
+    res.data = updateUser;
   } catch (error) {
     res.err = error;
   } finally {
